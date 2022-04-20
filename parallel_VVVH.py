@@ -7,6 +7,8 @@ from mantle_utils.alg.raster import Raster
 from rasterio.windows import Window
 import numpy as np
 from multiprocessing import Pool
+import itertools
+import pbd
 def compute(idx,ip, sorted_datetimes):#df will not be the input, i,j will be
     df = {'ds':sorted_datetimes,'y':ip[:,idx[0],idx[1]]}
     df = pd.DataFrame(df)
@@ -47,6 +49,7 @@ if __name__ == "__main__":
         geotiff_path = stack_df.loc[stack_df['start_datetime'] == start_datetime_np]['raster_path'].values[0]
         partial_raster = Raster(geotiff_path, window=window)
         temp = partial_raster.array.reshape(size[1],size[0])
+        pdb.set_trace()
         ip.append(temp)
     #pdb.set_trace()
     ip = np.array(ip) 
