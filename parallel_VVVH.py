@@ -9,8 +9,8 @@ import numpy as np
 from multiprocessing import Pool
 import itertools
 #import pbd
-def compute(idx):#df will not be the input, i,j will be
-    df = {'ds':sorted_datetimes,'y':ip[:,idx[0],idx[1]]}
+def compute(idx0.idx1):#df will not be the input, i,j will be
+    df = {'ds':sorted_datetimes,'y':ip[:,idx0,idx1]}
     df = pd.DataFrame(df)
     m = Prophet()
     m.fit(df)
@@ -19,10 +19,10 @@ def compute(idx):#df will not be the input, i,j will be
     #out[i][j]=
     fig1 = m.plot(forecast)
     fig2 = m.plot_components(forecast)
-    fig1.savefig('trend%s%s.svg'%(str(idx[0]),str(idx[1])))
-    fig2.savefig('comp%s%s.svg'%(str(idx[0]),str(idx[1])))
+    fig1.savefig('trend%s%s.svg'%(str(idx0),str(idx1)))
+    fig2.savefig('comp%s%s.svg'%(str(idx0),str(idx1)))
     #np.save('prediction.npy',out)
-    return [forecast['yhat'].values[0],idx[0],idx[1]]
+    return [forecast['yhat'].values[0],idx0,idx1]
 
 if __name__ == "__main__":
     stack_raster_paths, stack_metadata = \
