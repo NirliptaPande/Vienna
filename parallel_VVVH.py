@@ -9,7 +9,7 @@ import numpy as np
 from multiprocessing import Pool
 import itertools
 #import pbd
-def compute(idx0.idx1):#df will not be the input, i,j will be
+def compute(idx0,idx1):#df will not be the input, i,j will be
     df = {'ds':sorted_datetimes,'y':ip[:,idx0,idx1]}
     df = pd.DataFrame(df)
     m = Prophet()
