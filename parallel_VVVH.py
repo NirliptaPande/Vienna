@@ -17,8 +17,8 @@ def compute(idx,ip, sorted_datetimes):#df will not be the input, i,j will be
     #out[i][j]=
     fig1 = m.plot(forecast)
     fig2 = m.plot_components(forecast)
-    fig1.savefig('trend%s%s.svg'%(str(idx[0]),str(idx[1]))
-    fig2.savefig('comp%s%s.svg'%(str(idx[0]),str(idx[1]))
+    fig1.savefig('trend%s%s.svg'%(str(idx[0]),str(idx[1])))
+    fig2.savefig('comp%s%s.svg'%(str(idx[0]),str(idx[1])))
     #np.save('prediction.npy',out)
     return [forecast['yhat'].values[0],i,j]
 
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     with Pool() as pool:
     #Distribute the parameter sets evenly across the cores
         res = pool.starmap(compute,zip(paramlist,ip,sorted_datetimes))
-        for _ in range(len(paramlist)):
-            out[res[_][1]][res[_][2]] = res[_][0]
+        for k in range(len(paramlist)):
+            out[res[k][1]][res[k][2]] = res[k][0]
         
 
