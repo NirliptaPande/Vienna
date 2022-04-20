@@ -8,7 +8,7 @@ from rasterio.windows import Window
 import numpy as np
 from multiprocessing import Pool
 import itertools
-import pbd
+#import pbd
 def compute(idx):#df will not be the input, i,j will be
     df = {'ds':sorted_datetimes,'y':ip[:,idx[0],idx[1]]}
     df = pd.DataFrame(df)
