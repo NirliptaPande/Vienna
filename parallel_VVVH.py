@@ -9,7 +9,7 @@ import numpy as np
 from multiprocessing import Pool
 import itertools
 import pbd
-def compute(idx,ip, sorted_datetimes):#df will not be the input, i,j will be
+def compute(idx):#df will not be the input, i,j will be
     df = {'ds':sorted_datetimes,'y':ip[:,idx[0],idx[1]]}
     df = pd.DataFrame(df)
     m = Prophet()
@@ -22,7 +22,7 @@ def compute(idx,ip, sorted_datetimes):#df will not be the input, i,j will be
     fig1.savefig('trend%s%s.svg'%(str(idx[0]),str(idx[1])))
     fig2.savefig('comp%s%s.svg'%(str(idx[0]),str(idx[1])))
     #np.save('prediction.npy',out)
-    return [forecast['yhat'].values[0],i,j]
+    return [forecast['yhat'].values[0],idx[0],idx[1]]
 
 if __name__ == "__main__":
     stack_raster_paths, stack_metadata = \
@@ -41,15 +41,17 @@ if __name__ == "__main__":
     #loop through time do it in a continous manner???
     stack_df = stack_df[np.logical_and(stack_df['start_datetime'] >= np.datetime64('2019-01-01'), stack_df['start_datetime'] < np.datetime64('2019-04-01'))]
     stack_df = stack_df.loc[stack_df['source_artefact_name'] == 'VVVH']
+    global sorted_datetimes
     sorted_datetimes = sorted(list(set(
     stack_df['start_datetime'].values)))
+    global ip 
     ip = []
     for start_datetime_np in sorted_datetimes:
        # print(stack_df.loc[stack_df['start_datetime'] == start_datetime_np]['raster_path'].values)
         geotiff_path = stack_df.loc[stack_df['start_datetime'] == start_datetime_np]['raster_path'].values[0]
         partial_raster = Raster(geotiff_path, window=window)
         temp = partial_raster.array.reshape(size[1],size[0])
-        pdb.set_trace()
+        #pdb.set_trace()
         ip.append(temp)
     #pdb.set_trace()
     ip = np.array(ip) 
@@ -59,9 +61,9 @@ if __name__ == "__main__":
     j = range(size[0])
     paramlist = list(itertools.product(i,j))
     #Generate processes equal to the number of cores
-    with Pool() as pool:
+    with Pool(12) as pool:
     #Distribute the parameter sets evenly across the cores
-        res = pool.starmap(compute,zip(paramlist,ip,sorted_datetimes))
+        res = pool.starmap(compute,paramlist)
         for k in range(len(paramlist)):
             out[res[k][1]][res[k][2]] = res[k][0]
         
