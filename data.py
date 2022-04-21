@@ -1,4 +1,4 @@
-import  as np
+import numpy as np
 import datetime
 from mantle_utils.workflow.enqueue import get_raster_stack_paths_and_metadata
 from mantle_utils.workflow.process import sanitize_raster_stack_paths_and_metadata
