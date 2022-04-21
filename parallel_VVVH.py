@@ -34,7 +34,7 @@ def compute(idx0,idx1):#df will not be the input, i,j will be
     future = m.make_future_dataframe(periods=1)
     forecast = m.predict(future)
     #out[i][j]=
-    
+
     fig1 = m.plot(forecast)
     fig2 = m.plot_components(forecast)
     fig1.savefig(os.path.join(save_path_t,'%s_%s.svg'%(str(idx0),str(idx1))))
@@ -133,13 +133,13 @@ if __name__ == "__main__":
     #Generate processes equal to the number of cores
     with Pool(12) as pool:
     #Distribute the parameter sets evenly across the cores
-        res = pool.starmap(compute,zip(paramlist))
+        res = pool.starmap(compute,paramlist)
         for k in range(len(paramlist)):
             out_a[res[k][1]][res[k][2]] = res[k][0]
     check = 0b1
     with Pool(12) as pool:
     #Distribute the parameter sets evenly across the cores
-        res = pool.starmap(compute,zip(paramlist))
+        res = pool.starmap(compute,paramlist)
         for k in range(len(paramlist)):
             out_d[res[k][1]][res[k][2]] = res[k][0]
         
