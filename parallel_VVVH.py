@@ -19,6 +19,7 @@ def compute(idx0,idx1):#df will not be the input, i,j will be
     ip = ip_asc
     save_path_t=''
     save_path_c=''
+    sorted_dates = sorted_datetimes_asc
     if(check & 0b1 == 0):
         #ip = ip_asc
         save_path_t = './single_op_asc_dsc/asc/trends/'
@@ -27,7 +28,8 @@ def compute(idx0,idx1):#df will not be the input, i,j will be
         ip = ip_dsc
         save_path_t = './single_op_asc_dsc/dsc/trends/'
         save_path_c = './single_op_asc_dsc/dsc/comp/'
-    df = {'ds':sorted_datetimes,'y':ip[:,idx0,idx1]}
+        sorted_dates = sorted_datetimes_dsc
+    df = {'ds':sorted_dates,'y':ip[:,idx0,idx1]}
     df = pd.DataFrame(df)
     m = Prophet()
     m.fit(df)
@@ -65,7 +67,10 @@ if __name__ == "__main__":
 
     stack_df = stack_df[stack_df['source_workflow_name'] == 's1-generate_composites']
     stack_df = stack_df[np.logical_and(stack_df['start_datetime'] >= np.datetime64('2019-01-01'), stack_df['start_datetime'] < np.datetime64('2019-04-01'))]
-    global sorted_datetimes
+    global sorted_datetimes_asc
+    global sorted_datetimes_dsc
+    sorted_datetimes_asc =[]
+    sorted_datetimes_dsc =[]
     sorted_datetimes = sorted(list(set(
     stack_df['start_datetime'].values)))
     global ip_asc
@@ -105,9 +110,10 @@ if __name__ == "__main__":
 
         if products[0]['product_metadata']['pass'] == 'ASCENDING':
             ip_asc.append(temp)
+            sorted_datetimes_asc.append(start_datetime_np)
         if products[0]['product_metadata']['pass'] == 'DESCENDING':
             ip_dsc.append(temp)  
-
+            sorted_datetimes_dsc.append(start_datetime_np)
 
     # here you do whatever you want with your DESCENDING product
 
