@@ -76,8 +76,10 @@ for start_datetime_np in sorted_datetimes:
         # ip_dsc.append(temp)  
         sorted_datetimes_dsc.append(start_datetime_np)
 stack_df.to_feather('./namelist/s1_alltime.ftr')
-dt_sort = pd.DataFrame(sorted_datetimes)
+#dt_sort = pd.DataFrame(sorted_datetimes)
 dt_sort_a = pd.DataFrame(sorted_datetimes_asc)
 dt_sort_d = pd.DataFrame(sorted_datetimes_dsc)
-stack_df.to_feather('./namelist/s1_all_a.ftr')
-stack_df.to_feather('./namelist/s1_all_d.ftr')
+dt_sort_a.to_feather('./namelist/s1_dates_a.ftr')
+dt_sort_d.to_feather('./namelist/s1_dates_d.ftr')
+#dt_sort.to_feather('./namelist/s1_dates.ftr')
+
