@@ -10,7 +10,6 @@ import itertools
 import os.path
 #import pbd
 def compute(idx0,idx1):#df will not be the input, i,j will be
-    #ip = ip_'%s'sc %(order)
     ip = ip_asc
     save_path_t = './single_op_asc_dsc/asc/trends/'
     save_path_c = './single_op_asc_dsc/asc/comp/'
@@ -26,13 +25,11 @@ def compute(idx0,idx1):#df will not be the input, i,j will be
     m.fit(df)
     future = m.make_future_dataframe(periods=1)
     forecast = m.predict(future)
-    #out[i][j]=
-
-    fig1 = m.plot(forecast)
-    fig2 = m.plot_components(forecast)
-    fig1.savefig(os.path.join(save_path_t,'%s_%s.svg'%(str(idx0),str(idx1))))
-    fig2.savefig(os.path.join(save_path_c,'%s_%s.svg'%(str(idx0),str(idx1))))
-    #np.save('prediction.npy',out)
+    if (idx0*idx1%400==0):
+        fig1 = m.plot(forecast)
+        fig2 = m.plot_components(forecast)
+        fig1.savefig(os.path.join(save_path_t,'%s_%s.svg'%(str(idx0),str(idx1))))
+        fig2.savefig(os.path.join(save_path_c,'%s_%s.svg'%(str(idx0),str(idx1))))
     return [forecast['yhat'].values[0],idx0,idx1]
 
 if __name__ == "__main__":
@@ -76,11 +73,13 @@ if __name__ == "__main__":
         res = pool.starmap(compute,paramlist)
         for k in range(len(paramlist)):
             out_a[res[k][1]][res[k][2]] = res[k][0]
+    np.save('./namelist/prediction_asc.npy',out_a)
     check = 0b1
     with Pool(16) as pool:
     #Distribute the parameter sets evenly across the cores
         res = pool.starmap(compute,paramlist)
         for k in range(len(paramlist)):
             out_d[res[k][1]][res[k][2]] = res[k][0]
+    np.save('./namelist/prediction_dsc.npy',out_d)
         
 
