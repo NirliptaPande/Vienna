@@ -21,11 +21,12 @@ def compute(idx0,idx1):#df will not be the input, i,j will be
         sorted_dates = sorted_datetimes_dsc
     df = {'ds':sorted_dates['start_time'],'y':ip[:,idx0,idx1]}
     df = pd.DataFrame(df)
+    df = df[df['y']!=255]
     m = Prophet()
     m.fit(df)
     future = m.make_future_dataframe(periods=1)
     forecast = m.predict(future)
-    if (idx0*idx1%400==0):
+    if (((idx0+5)%10==0)&(idx1%16==0)):
         fig1 = m.plot(forecast)
         fig2 = m.plot_components(forecast)
         fig1.savefig(os.path.join(save_path_t,'%s_%s.svg'%(str(idx0),str(idx1))))
@@ -33,18 +34,20 @@ def compute(idx0,idx1):#df will not be the input, i,j will be
     return [forecast['yhat'].values[0],idx0,idx1]
 
 if __name__ == "__main__":
+    start = '2019-05-01'
+    end = '2019-08-01'
     stack_df = pd.read_pickle('./namelist/s1_alltime.pkl')
     #stack_df = pd.DataFrame(stack_df)
     stack_df['start_datetime'] = pd.to_datetime(stack_df['start_datetime'])
-    stack_df = stack_df[np.logical_and(stack_df['start_datetime'] >= np.datetime64('2019-01-01'), stack_df['start_datetime'] < np.datetime64('2019-04-01'))]
+    stack_df = stack_df[np.logical_and(stack_df['start_datetime'] >= np.datetime64(start), stack_df['start_datetime'] < np.datetime64(end))]
     global sorted_datetimes_asc
     global sorted_datetimes_dsc
     sorted_datetimes_asc = pd.read_pickle('./namelist/s1_dates_a.pkl')
     sorted_datetimes_dsc = pd.read_pickle('./namelist/s1_dates_d.pkl')
     sorted_datetimes_asc.columns =['start_time']
     sorted_datetimes_dsc.columns =['start_time']
-    sorted_datetimes_asc = sorted_datetimes_asc[np.logical_and(sorted_datetimes_asc['start_time'] >= np.datetime64('2019-01-01'), sorted_datetimes_asc['start_time'] < np.datetime64('2019-04-01'))]
-    sorted_datetimes_dsc = sorted_datetimes_dsc[np.logical_and(sorted_datetimes_dsc['start_time'] >= np.datetime64('2019-01-01'), sorted_datetimes_dsc['start_time'] < np.datetime64('2019-04-01'))]
+    sorted_datetimes_asc = sorted_datetimes_asc[np.logical_and(sorted_datetimes_asc['start_time'] >= np.datetime64(start), sorted_datetimes_asc['start_time'] < np.datetime64(end))]
+    sorted_datetimes_dsc = sorted_datetimes_dsc[np.logical_and(sorted_datetimes_dsc['start_time'] >= np.datetime64(start), sorted_datetimes_dsc['start_time'] < np.datetime64(end))]
     sorted_datetimes_dsc['start_time'] = pd.to_datetime(sorted_datetimes_dsc['start_time'])
     sorted_datetimes_asc['start_time'] = pd.to_datetime(sorted_datetimes_asc['start_time'])
     sorted_datetimes = sorted(list(set(
