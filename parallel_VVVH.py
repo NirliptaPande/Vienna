@@ -8,7 +8,7 @@ import numpy as np
 from multiprocessing import Pool
 import itertools
 import os.path
-import pdb
+#import pdb
 def compute(idx0,idx1):#df will not be the input, i,j will be
     ip = ip_asc
     sorted_dates = sorted_datetimes_asc
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     i = range(size[1])
     j = range(size[0])
     paramlist = list(itertools.product(i,j))
-    pdb.set_trace()
+    #pdb.set_trace()
     #Generate processes equal to the number of cores
     with Pool(12) as pool:
     #Distribute the parameter sets evenly across the cores
