@@ -17,7 +17,7 @@ def compute(idx0,idx1):#df will not be the input, i,j will be
     sorted_dates = sorted_datetimes_asc
     save_path_t = './single_op_asc_dsc/asc/trends_partial/'
     save_path_c = './single_op_asc_dsc/asc/comp_partial/'
-     if(decide & 0b1 == 1):
+    if(decide & 0b1 == 1):
         ip = ip_dsc
         save_path_t = './single_op_asc_dsc/dsc/trends_partial/'
         save_path_c = './single_op_asc_dsc/dsc/comp_partial/'
@@ -49,8 +49,8 @@ if __name__ == "__main__":
     df_asc.columns =['start_time']
     df_dsc.columns =['start_time']
     df['start_datetime'] = pd.to_datetime(df['start_datetime'])
-    df_asc['start_datetime'] = pd.to_datetime(df_asc['start_datetime'])
-    df_dsc['start_datetime'] = pd.to_datetime(df_dsc['start_datetime'])
+    df_asc['start_time'] = pd.to_datetime(df_asc['start_time'])
+    df_dsc['start_time'] = pd.to_datetime(df_dsc['start_time'])
     for single_date in daterange(start_date, end_date):
         start = single_date
         end = start + datetime.timedelta(days=85)
@@ -59,7 +59,7 @@ if __name__ == "__main__":
         sorted_datetimes_dsc = df_dsc[np.logical_and(df_dsc['start_time'] >= np.datetime64(start), df_dsc['start_time'] < np.datetime64(end))]
         sorted_datetimes_dsc['start_time'] = pd.to_datetime(sorted_datetimes_dsc['start_time'])
         sorted_datetimes_asc['start_time'] = pd.to_datetime(sorted_datetimes_asc['start_time'])
-        sorted_datetimes_asc = sorted(list(set(
+        sorted_datetimes = sorted(list(set(
         stack_df['start_datetime'].values)))
         global ip_asc
         global ip_dsc 
@@ -85,13 +85,13 @@ if __name__ == "__main__":
         j = range(size[0])
         paramlist = list(itertools.product(i,j))
         with Pool(14) as pool:
-        	res = pool.starmap(compute,paramlist)
-        	for k in range(len(paramlist)):
-            	out_a[res[k][1]][res[k][2]] = res[k][0]
-        np.save('./namelist/prediction_asc_%s.npy'%str(end),out)
-    	check = 0b1
-    	with Pool(14) as pool:
-        	res = pool.starmap(compute,paramlist)
-        	for k in range(len(paramlist)):
-            	out_d[res[k][1]][res[k][2]] = res[k][0]
-        np.save('./namelist/prediction_dsc_%s.npy'%str(end),out)
+            res = pool.starmap(compute,paramlist)
+            for k in range(len(paramlist)):
+                out_a[res[k][1]][res[k][2]] = res[k][0]
+        np.save('./namelist/prediction_asc_%s.npy'%str(end),out_a)
+        check = 0b1
+        with Pool(14) as pool:
+            res = pool.starmap(compute,paramlist)
+            for k in range(len(paramlist)):
+                out_d[res[k][1]][res[k][2]] = res[k][0]
+        np.save('./namelist/prediction_dsc_%s.npy'%str(end),out_d)
