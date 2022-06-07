@@ -21,7 +21,7 @@ def compute(idx0,idx1):#df will not be the input, i,j will be
         ip = ip_dsc
         save_path_t = './single_op_asc_dsc/dsc/trends_partial/'
         save_path_c = './single_op_asc_dsc/dsc/comp_partial/'
-    sorted_dates = sorted_datetimes_dsc
+        sorted_dates = sorted_datetimes_dsc
     # df is the  final dataset, 1D in this case, with 2 columns, time and Y values
     df = {'ds':sorted_dates['start_time'],'y':ip[:,idx0,idx1]}
     df = pd.DataFrame(df)
@@ -88,10 +88,12 @@ if __name__ == "__main__":
             res = pool.starmap(compute,paramlist)
             for k in range(len(paramlist)):
                 out_a[res[k][1]][res[k][2]] = res[k][0]
-        np.save('./namelist/prediction_asc_%s.npy'%str(end),out)
-        check = 0b1
+        pool.close()
+        pool.join()
+        np.save('./namelist/prediction_asc_%s.npy'%str(end),out_a)
+        decide = 0b1
         with Pool(14) as pool:
             res = pool.starmap(compute,paramlist)
             for k in range(len(paramlist)):
                 out_d[res[k][1]][res[k][2]] = res[k][0]
-        np.save('./namelist/prediction_dsc_%s.npy'%str(end),out)
+        np.save('./namelist/prediction_dsc_%s.npy'%str(end),out_d)
