@@ -18,11 +18,6 @@ def daterange(start_date, end_date):
 def compute(idx0,idx1):#df will not be the input, i,j will be
     # ip = ip_asc
     sorted_dates = sorted_datetimes
-    # if(decide & 0b1 == 1):
-    #     ip = ip_dsc
-    #     save_path_t = './single_op_asc_dsc/dsc/trends_partial/'
-    #     save_path_c = './single_op_asc_dsc/dsc/comp_partial/'
-    #     sorted_dates = sorted_datetimes_dsc
     df = {'ds':sorted_dates['start_time'],'y':ip[:,idx0,idx1]}
     df = pd.DataFrame(df)
     df = df[df['y']!=0.0]
@@ -49,7 +44,6 @@ if __name__ == "__main__":
     for single_date in daterange(start_date, end_date):
         start = single_date
         end = start + datetime.timedelta(days=85)
-        #stack_df = pd.DataFrame(stack_df)
         stack_df = df[np.logical_and(df['start_datetime'] >= np.datetime64(start), df['start_datetime'] < np.datetime64(end))]
         global sorted_datetimes
         sorted_datetimes = sorted(list(set(
