@@ -4,17 +4,17 @@ import tensorflow_addons as tfa
 import numpy as np
 import time
 class Classifier_FCN:
-    def __init__(self, output_directory, input_shape, nb_classes, verbose=True,build=True):
-        self.output_directory = output_directory
+    def __init__(self, input_shape, verbose=True,build=True):
+        self.output_directory = './namelist/'
         if build == True:
-            self.model = self.build_model(input_shape, nb_classes)
+            self.model = self.build_model(input_shape)
             if(verbose==True):
                 self.model.summary()
             self.verbose = verbose
             self.model.save_weights(self.output_directory+'fcn_init.hdf5')
         return
 
-    def build_model(self, input_shape, nb_classes):
+    def build_model(self, input_shape):
         input_layer = keras.layers.Input(input_shape)
 
         conv1 = keras.layers.Conv1D(filters=128, kernel_size=8, padding='same')(input_layer)
@@ -31,11 +31,11 @@ class Classifier_FCN:
 
         gap_layer = keras.layers.GlobalAveragePooling1D()(conv3)
 
-        output_layer = keras.layers.Dense(nb_classes, activation='softmax')(gap_layer)
+        output_layer = keras.layers.Dense(1)(gap_layer)
 
         model = keras.models.Model(inputs=input_layer, outputs=output_layer)
 
-        model.compile(loss='categorical_crossentropy', optimizer = keras.optimizers.Adam(), 
+        model.compile(loss=tf.keras.losses.MeanSquaredError(), optimizer = keras.optimizers.Adam(), 
             metrics=['accuracy'])
 
         reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.5, patience=50, 
@@ -50,13 +50,13 @@ class Classifier_FCN:
 
         return model 
 
-    def fit(self, x_train, y_train, x_val, y_val,y_true):
+    def fit(self, x_train, y_train, x_val, y_val):
         #if not tf.test.is_gpu_available:
             #print('error')
             #exit()
         # x_val and y_val are only used to monitor the test loss and NOT for training  
         batch_size = 16
-        nb_epochs = 2000
+        nb_epochs = 500
 
         mini_batch_size = int(min(x_train.shape[0]/10, batch_size))
 
@@ -73,20 +73,14 @@ class Classifier_FCN:
 
         y_pred = model.predict(x_val)
 
-        # convert the predicted from binary to integer 
-        y_pred = np.argmax(y_pred , axis=1)
+        # convert the predicted from binary to integer
 
-        save_logs(self.output_directory, hist, y_pred, y_true, duration)
+        save_logs(self.output_directory, hist, y_pred, y_train, duration)
 
         keras.backend.clear_session()
 
-    def predict(self, x_test, y_true,x_train,y_train,y_test,return_df_metrics = True):
+    def predict(self, x_test,x_train,y_train,y_test):
         model_path = self.output_directory + 'best_model.hdf5'
         model = keras.models.load_model(model_path)
         y_pred = model.predict(x_test)
-        if return_df_metrics:
-            y_pred = np.argmax(y_pred, axis=1)
-            df_metrics = calculate_metrics(y_true, y_pred, 0.0)
-            return df_metrics
-        else:
-            return y_pred
+        return y_pred

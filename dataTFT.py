@@ -21,7 +21,7 @@ def prep_data(band):
         temp = median_filter(temp, size=3)
         ip.append(temp)
     ip = np.array(ip)
-    ip[ip != 0]
+    #ip = ip[ip != 0]
     np.save('./namelist/b%s.npy'%band,ip)
 if __name__ == "__main__":
     with Pool() as pool:
