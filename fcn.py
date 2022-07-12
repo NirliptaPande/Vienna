@@ -5,6 +5,7 @@ import numpy as np
 import time
 class Classifier_FCN:
     def __init__(self, input_shape, verbose=True,build=True):
+        #input shape is 1 row of the csv
         self.output_directory = './namelist/'
         if build == True:
             self.model = self.build_model(input_shape)
@@ -38,7 +39,7 @@ class Classifier_FCN:
         model.compile(loss=tf.keras.losses.MeanSquaredError(), optimizer = keras.optimizers.Adam(), 
             metrics=['accuracy'])
 
-        reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.5, patience=50, 
+        reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.5, patience=25, 
             min_lr=0.0001)
 
         file_path = self.output_directory+'best_model.hdf5'
@@ -50,7 +51,7 @@ class Classifier_FCN:
 
         return model 
 
-    def fit(self, x_train, y_train, x_val, y_val):
+    def fit(self, x_train, y_train, x_test):
         #if not tf.test.is_gpu_available:
             #print('error')
             #exit()
@@ -63,24 +64,14 @@ class Classifier_FCN:
         start_time = time.time() 
 
         hist = self.model.fit(x_train, y_train, batch_size=mini_batch_size, epochs=nb_epochs,
-            verbose=self.verbose, validation_data=(x_val,y_val), callbacks=self.callbacks)
-        
+            verbose=self.verbose, callbacks=self.callbacks)
+
         duration = time.time() - start_time
 
         self.model.save(self.output_directory+'last_model.hdf5')
 
         model = keras.models.load_model(self.output_directory+'best_model.hdf5')
-
-        y_pred = model.predict(x_val)
-
-        # convert the predicted from binary to integer
-
-        save_logs(self.output_directory, hist, y_pred, y_train, duration)
-
-        keras.backend.clear_session()
-
-    def predict(self, x_test,x_train,y_train,y_test):
-        model_path = self.output_directory + 'best_model.hdf5'
-        model = keras.models.load_model(model_path)
         y_pred = model.predict(x_test)
+        keras.backend.clear_session()
         return y_pred
+        # convert the predicted from binary to integer
