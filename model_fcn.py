@@ -27,10 +27,10 @@ def build_model(input_shape,x_test,x_train,y_train):
 
     model = keras.models.Model(inputs=input_layer, outputs=output_layer)
 
-    model.compile(loss=tf.keras.losses.MeanSquaredError(), optimizer = keras.optimizers.Adam(), 
-            metrics=['accuracy'])
+    model.compile(loss=tf.keras.losses.MeanSquaredError(), optimizer = keras.optimizers.Adam(learning_rate=0.01), 
+            metrics=['mae'])
 
-    reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.5, patience=25, 
+    reduce_lr = keras.callbacks.ReduceLROnPlateau(monitor='loss', factor=0.5, patience=17, 
             min_lr=0.0001)
 
     file_path = output_directory+'best_model.hdf5'
