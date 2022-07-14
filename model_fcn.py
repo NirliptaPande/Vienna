@@ -39,7 +39,7 @@ def build_model(input_shape,x_test,x_train,y_train):
             save_best_only=True)
 
     #self.callbacks = [reduce_lr,model_checkpoint]
-    batch_size = 16
+    batch_size = 40
     nb_epochs = 500
 
     mini_batch_size = int(min(x_train.shape[0]/10, batch_size))
