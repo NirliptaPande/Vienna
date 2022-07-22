@@ -91,9 +91,4 @@ if __name__ == "__main__":
         pool.close()
         pool.join()
         np.save('./namelist/prediction_asc_%s.npy'%str(end),out_a)
-        decide = 0b1
-        with Pool(14) as pool:
-            res = pool.starmap(compute,paramlist)
-            for k in range(len(paramlist)):
-                out_d[res[k][1]][res[k][2]] = res[k][0]
-        np.save('./namelist/prediction_dsc_%s.npy'%str(end),out_d)
+        
